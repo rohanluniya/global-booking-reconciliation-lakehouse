@@ -1,0 +1,82 @@
+name: CI Quality, Contracts, Iceberg, dbt & Chaos Gate
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  fast-pr-checks:
+    name: Lint, Typecheck, Static, License, Unit & Contracts
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.3"
+          python-version: "3.12.8"
+
+      - name: Sync locked environment
+        run: uv sync --frozen --extra dev --python 3.12.8
+
+      - name: Ruff lint check
+        run: uv run ruff check .
+
+      - name: Mypy static type check
+        run: uv run mypy booking_ledger services scripts benchmarks
+
+      - name: Static AST, JSON, YAML & tag pinning check
+        run: uv run python scripts/verify_static.py
+
+      - name: License compliance & SBOM generation
+        run: |
+          uv run python scripts/check_licenses.py
+          uv run python scripts/generate_sbom.py
+
+      - name: Fast unit, Hypothesis property & Avro contract tests
+        run: uv run pytest -m "unit or contract" -v
+
+  integration-dbt-chaos:
+    name: Iceberg V2 Medallion, dbt build, E2E API & Chaos Drills
+    runs-on: ubuntu-24.04
+    needs: [fast-pr-checks]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.3"
+          python-version: "3.12.8"
+
+      - name: Sync locked environment
+        run: uv sync --frozen --extra dev --python 3.12.8
+
+      - name: Full medallion pipeline & dbt build
+        run: uv run python scripts/run_pipeline.py --export-results
+
+      - name: Automated 7-drill chaos suite
+        run: uv run python scripts/run_chaos_drills.py
+
+      - name: Full pytest suite (integration, e2e, chaos, performance)
+        run: uv run pytest -v
+
+  container-build-verify:
+    name: Standalone Docker Image Build Check
+    runs-on: ubuntu-24.04
+    needs: [fast-pr-checks]
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build standalone Docker image
+        run: docker build -f infra/docker/Dockerfile.standalone -t booking-finance-lakehouse:ci-check .

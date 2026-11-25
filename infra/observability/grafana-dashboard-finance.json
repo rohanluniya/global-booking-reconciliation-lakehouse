@@ -1,0 +1,51 @@
+{
+  "title": "Global Booking & Financial Reconciliation Lakehouse",
+  "uid": "booking-finance-reconciliation",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Trial Balance Imbalance (USD Minor Units)",
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "finance_trial_balance_imbalance_minor"}]
+    },
+    {
+      "id": 2,
+      "type": "gauge",
+      "title": "3-Way Reconciliation Match Rate",
+      "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "finance_reconciliation_match_rate"}]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Open Exception Count",
+      "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "finance_open_exceptions_count"}]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Data Quality Pass Rate",
+      "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "finance_dq_pass_rate"}]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Ledger Entries Posted by Entry Type",
+      "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+      "targets": [{"expr": "sum by (entry_type) (finance_ledger_entries_total)"}]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "API Latency p95 (seconds)",
+      "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
+      "targets": [{"expr": "histogram_quantile(0.95, sum(rate(finance_api_request_duration_seconds_bucket[5m])) by (le, path))"}]
+    }
+  ]
+}

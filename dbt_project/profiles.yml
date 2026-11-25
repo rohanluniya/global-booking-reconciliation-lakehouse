@@ -1,0 +1,8 @@
+booking_lakehouse_duckdb:
+  target: local
+  outputs:
+    local:
+      type: duckdb
+      path: "{{ env_var('FINANCE_DUCKDB_PATH', '../.local_data/lakehouse.duckdb') }}"
+      schema: marts
+      threads: 4

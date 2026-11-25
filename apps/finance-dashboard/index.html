@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Booking &amp; Financial Reconciliation Control Tower</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-badge">ICEBERG V2 &bull; DOUBLE-ENTRY LEDGER</div>
+        <h1>Global Booking &amp; Financial Reconciliation Control Tower</h1>
+        <p class="subtitle">
+          Exact integer minor-unit accounting &bull; Bi-temporal CDC &amp; SCD2 &bull; 3-Way Ledger / PSP / Bank Reconciliation
+        </p>
+      </div>
+      <div class="topbar-controls">
+        <div class="freshness-pill" id="freshness-pill">Loading lakehouse snapshot...</div>
+        <div class="control-row">
+          <label class="sr-only" for="role-select">API Role</label>
+          <select id="role-select" title="Active RBAC role for live API calls">
+            <option value="admin" selected>Role: Admin (Full Control)</option>
+            <option value="auditor">Role: Auditor (Resolve)</option>
+            <option value="reader">Role: Reader (Read-Only)</option>
+          </select>
+          <button id="refresh-btn" class="btn btn-secondary" type="button">Refresh</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="kpi-grid" aria-label="Executive Financial KPIs">
+      <article class="kpi-card kpi-emerald">
+        <div class="kpi-label">Trial Balance Proof (USD)</div>
+        <div class="kpi-value mono" id="kpi-imbalance">$0.00</div>
+        <div class="kpi-meta" id="kpi-debits-credits">Debits = Credits (Zero-Sum Verified)</div>
+      </article>
+      <article class="kpi-card kpi-sky">
+        <div class="kpi-label">3-Way Recon Match Rate</div>
+        <div class="kpi-value mono" id="kpi-match-rate">--%</div>
+        <div class="kpi-meta" id="kpi-match-counts">Ledger &harr; PSP &harr; Bank</div>
+      </article>
+      <article class="kpi-card kpi-indigo">
+        <div class="kpi-label">Recognized Platform Revenue</div>
+        <div class="kpi-value mono" id="kpi-rev-rec">--</div>
+        <div class="kpi-meta" id="kpi-rev-def">Deferred: --</div>
+      </article>
+      <article class="kpi-card kpi-amber">
+        <div class="kpi-label">Open Exception Exposure</div>
+        <div class="kpi-value mono" id="kpi-exposure">--</div>
+        <div class="kpi-meta" id="kpi-exc-count">0 open tickets</div>
+      </article>
+      <article class="kpi-card kpi-teal">
+        <div class="kpi-label">Data Quality &amp; Quarantine</div>
+        <div class="kpi-value mono" id="kpi-dq-rate">--%</div>
+        <div class="kpi-meta" id="kpi-dlq-count">0 poison events quarantined</div>
+      </article>
+      <article class="kpi-card kpi-violet">
+        <div class="kpi-label">Accounting Close &amp; Restatements</div>
+        <div class="kpi-value mono" id="kpi-close-status">--</div>
+        <div class="kpi-meta" id="kpi-restatements">0 restatement lines</div>
+      </article>
+    </section>
+
+    <main class="main-grid">
+      <!-- Trial Balance Panel -->
+      <section class="panel panel-wide">
+        <div class="panel-header">
+          <div>
+            <h2>Double-Entry Trial Balance (Exact Minor Units &rarr; USD)</h2>
+            <p class="panel-sub">10-account Chart of Accounts &bull; Immutable append-only journal legs</p>
+          </div>
+          <div class="segmented" role="group" aria-label="Accounting Period Filter">
+            <button class="seg-btn active" data-period="" type="button">ALL</button>
+            <button class="seg-btn" data-period="2026-04" type="button">2026-04</button>
+            <button class="seg-btn" data-period="2026-05" type="button">2026-05</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Account Code</th>
+                <th>Category</th>
+                <th class="num">Lines</th>
+                <th class="num">Reporting Debits</th>
+                <th class="num">Reporting Credits</th>
+                <th class="num">Net Balance</th>
+              </tr>
+            </thead>
+            <tbody id="trial-balance-body">
+              <tr><td colspan="6" class="empty">Loading trial balance...</td></tr>
+            </tbody>
+            <tfoot id="trial-balance-foot"></tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3-Way Recon & Aging Panel -->
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>3-Way Reconciliation Breakdown</h2>
+            <p class="panel-sub">Deterministic classification across Ledger, PSP &amp; Bank</p>
+          </div>
+        </div>
+        <div id="recon-bars" class="bar-list"></div>
+
+        <div class="sub-divider"></div>
+        <h3 class="sub-heading">Open Exception Aging Buckets</h3>
+        <div class="aging-grid" id="aging-grid"></div>
+      </section>
+
+      <!-- Period Close Sign-Off Certificates -->
+      <section class="panel panel-full">
+        <div class="panel-header">
+          <div>
+            <h2>Period Close Sign-Off &amp; Restatement Audit</h2>
+            <p class="panel-sub">Locked Apache Iceberg V2 snapshots &amp; verifiable SHA-256 sign-off certificates</p>
+          </div>
+          <button id="btn-post-restatement" class="btn btn-outline btn-inline" type="button">
+            Simulate Post-Close Restatement (2026-04 &rarr; 2026-05)
+          </button>
+        </div>
+        <div id="close-cards" class="close-card-row"></div>
+        <div id="close-feedback" class="feedback-banner hidden"></div>
+      </section>
+
+      <!-- Reconciliation Exceptions Queue -->
+      <section class="panel panel-full">
+        <div class="panel-header">
+          <div>
+            <h2>Reconciliation Exceptions &amp; Resolution Workflow</h2>
+            <p class="panel-sub">Prioritized by severity &amp; USD exposure &bull; Resolving posts a balanced double-entry adjustment to Iceberg V2</p>
+          </div>
+          <div class="filter-row">
+            <select id="exc-status-filter" aria-label="Filter exception status">
+              <option value="">All Statuses</option>
+              <option value="OPEN" selected>OPEN</option>
+              <option value="INVESTIGATING">INVESTIGATING</option>
+              <option value="RESOLVED_ADJUSTED">RESOLVED_ADJUSTED</option>
+            </select>
+            <select id="exc-class-filter" aria-label="Filter classification">
+              <option value="">All Classifications</option>
+              <option value="CHARGEBACK_OPEN">CHARGEBACK_OPEN</option>
+              <option value="PARTIAL_REFUND_MISMATCH">PARTIAL_REFUND_MISMATCH</option>
+              <option value="UNMATCHED_PSP_OR_BANK">UNMATCHED_PSP_OR_BANK</option>
+              <option value="TIMING_IN_TRANSIT">TIMING_IN_TRANSIT</option>
+              <option value="FEE_VARIANCE">FEE_VARIANCE</option>
+              <option value="FX_VARIANCE">FX_VARIANCE</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Exception ID</th>
+                <th>Booking</th>
+                <th>Classification</th>
+                <th>Severity</th>
+                <th>Aging</th>
+                <th class="num">USD Exposure</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="exceptions-body">
+              <tr><td colspan="8" class="empty">Loading exceptions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Booking Double-Entry Trace Inspector -->
+      <section class="panel panel-wide">
+        <div class="panel-header">
+          <div>
+            <h2>Booking Double-Entry Trace &amp; Bi-Temporal History</h2>
+            <p class="panel-sub">Inspect immutable journal legs, FX rate version, and parent lineage for any booking</p>
+          </div>
+          <form id="booking-lookup-form" class="lookup-form">
+            <input id="booking-id-input" type="text" value="BKG-2026-00001" placeholder="e.g. BKG-2026-00001" />
+            <button class="btn btn-primary" type="submit">Inspect</button>
+          </form>
+        </div>
+        <div id="booking-trace-summary" class="trace-meta"></div>
+        <div class="table-wrap compact-trace">
+          <table class="data-table dense-table">
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Entry Type</th>
+                <th>Account</th>
+                <th class="num">Orig Dr / Cr</th>
+                <th class="num">USD Debit</th>
+                <th class="num">USD Credit</th>
+                <th>FX Ver</th>
+              </tr>
+            </thead>
+            <tbody id="booking-trace-body">
+              <tr><td colspan="7" class="empty">Loading trace for BKG-2026-00001...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Iceberg V2 Catalog & DQ Health -->
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Apache Iceberg V2 Lakehouse &amp; DQ</h2>
+            <p class="panel-sub">Live medallion snapshots &amp; 12 invariant checks</p>
+          </div>
+        </div>
+        <div class="table-wrap compact">
+          <table class="data-table dense-table">
+            <thead>
+              <tr>
+                <th>Iceberg V2 Table</th>
+                <th class="num">Rows</th>
+                <th class="num">Files</th>
+                <th class="num">Snaps</th>
+              </tr>
+            </thead>
+            <tbody id="iceberg-tables-body">
+              <tr><td colspan="4" class="empty">Loading catalog...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="sub-divider"></div>
+        <h3 class="sub-heading">Data Quality Invariants (12/12)</h3>
+        <div id="dq-pills" class="dq-grid"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Global Booking, Financial Ledger &amp; Reconciliation Lakehouse &bull; Local Native Iceberg V2 + DuckDB + dbt</span>
+      <span>Simulation for software engineering demonstration — not certified regulatory accounting advice</span>
+    </footer>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

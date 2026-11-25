@@ -1,0 +1,75 @@
+{
+  "checked_at": "2026-11-25T03:46:58.795384+00:00",
+  "project_license": "Apache-2.0",
+  "third_party_ml_weights_downloaded": 0,
+  "total_installed_packages": 102,
+  "flagged_copyleft_or_restricted": [],
+  "status": "PASS",
+  "key_runtime_packages": [
+    {
+      "name": "dbt-core",
+      "version": "1.11.17",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "dbt-duckdb",
+      "version": "1.11.1",
+      "license": "Apache-2"
+    },
+    {
+      "name": "duckdb",
+      "version": "2.0.0",
+      "license": "MIT License"
+    },
+    {
+      "name": "fastapi",
+      "version": "0.163.2",
+      "license": "MIT"
+    },
+    {
+      "name": "fastavro",
+      "version": "1.13.1",
+      "license": "MIT"
+    },
+    {
+      "name": "hypothesis",
+      "version": "6.170.15",
+      "license": "MPL-2.0"
+    },
+    {
+      "name": "matplotlib",
+      "version": "3.11.2",
+      "license": "Python Software Foundation License"
+    },
+    {
+      "name": "opentelemetry-sdk",
+      "version": "1.45.2",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "pyarrow",
+      "version": "25.0.1",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.14.3",
+      "license": "MIT"
+    },
+    {
+      "name": "pyiceberg",
+      "version": "0.12.0",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "SQLAlchemy",
+      "version": "2.1.9",
+      "license": "MIT"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "license": "BSD-3-Clause"
+    }
+  ]
+}

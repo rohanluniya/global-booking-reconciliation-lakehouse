@@ -1,0 +1,4 @@
+profile,seed,bookings,raw_cdc_events,ledger_lines,recon_transactions,open_exceptions,reconciliation_match_rate,trial_balance_imbalance_minor,sim_ms,temporal_ms,ledger_ms,recon_ms,close_ms,e2e_iceberg_duckdb_ms,ledger_lines_per_sec,recon_tx_per_sec,e2e_ledger_lines_per_sec,rss_mb
+smoke,20260501,150,1175,1909,152,22,0.855263,0,7.08,6.67,37.96,1.25,0.32,402.04,50284.1,121774.6,4748.3,198.94
+local,20260505,600,4673,8054,605,84,0.861157,0,23.83,22.93,102.25,4.68,1.24,665.14,78766.6,129395.6,12108.8,260.5
+stress,20260509,2500,19566,33764,2520,308,0.877778,0,102.35,97.6,441.12,21.97,5.63,2186.41,76542.4,114695.8,15442.6,451.88

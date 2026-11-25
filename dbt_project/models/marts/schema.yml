@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: mart_trial_balance
+    description: "Exact integer minor-unit trial balance per accounting period and account code."
+    columns:
+      - name: accounting_period
+        tests: [not_null]
+      - name: account_code
+        tests: [not_null]
+      - name: total_reporting_debit_minor
+        tests: [not_null]
+      - name: total_reporting_credit_minor
+        tests: [not_null]
+  - name: mart_revenue_recognition
+    description: "Deferred vs recognized platform revenue and refund contra-revenue per accounting period."
+    columns:
+      - name: accounting_period
+        tests: [unique, not_null]
+  - name: mart_reconciliation_bridge
+    description: "3-way payout & settlement reconciliation bridge grouped by period and classification."
+    columns:
+      - name: accounting_period
+        tests: [not_null]
+      - name: classification
+        tests: [not_null]
+  - name: mart_exception_aging
+    description: "Open and resolved reconciliation exceptions aggregated by aging bucket and severity."
+    columns:
+      - name: aging_bucket
+        tests: [not_null]
+      - name: severity
+        tests: [not_null]

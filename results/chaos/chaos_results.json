@@ -1,0 +1,91 @@
+{
+  "executed_at": "2026-11-25T03:34:30.583117+00:00",
+  "total_drills": 7,
+  "passed_drills": 7,
+  "failed_drills": 0,
+  "all_passed": true,
+  "drills": [
+    {
+      "drill_id": "CHAOS-01",
+      "name": "duplicate_cdc_replay_idempotency",
+      "passed": true,
+      "duration_ms": 642.76,
+      "evidence": {
+        "first_run_debits_usd_minor": 28443645,
+        "replayed_2x_debits_usd_minor": 28443645,
+        "imbalance_minor": 0
+      }
+    },
+    {
+      "drill_id": "CHAOS-02",
+      "name": "out_of_order_cdc_cancel_before_confirm",
+      "passed": true,
+      "duration_ms": 8.59,
+      "evidence": {
+        "events_reordered": 314,
+        "reconstructed_rows": 312,
+        "state_history_exact_match": true
+      }
+    },
+    {
+      "drill_id": "CHAOS-03",
+      "name": "duplicate_settlement_file_deduplication",
+      "passed": true,
+      "duration_ms": 20.3,
+      "evidence": {
+        "raw_psp_lines_injected": 144,
+        "deduped_unique_lines": 69,
+        "duplicates_removed": 75,
+        "exposure_unchanged_usd_minor": 320998
+      }
+    },
+    {
+      "drill_id": "CHAOS-04",
+      "name": "mid_month_fx_revision_non_mutating_adjustment",
+      "passed": true,
+      "duration_ms": 0.42,
+      "evidence": {
+        "fx_revision_adjustment_lines": 2,
+        "original_v1_captures_unmutated": true,
+        "global_imbalance_minor": 0
+      }
+    },
+    {
+      "drill_id": "CHAOS-05",
+      "name": "post_hard_close_late_chargeback_restatement",
+      "passed": true,
+      "duration_ms": 0.77,
+      "evidence": {
+        "closed_period_lines_before": 426,
+        "closed_period_lines_after": 426,
+        "routed_open_period": "2026-05",
+        "restatement_lines_posted": 2,
+        "global_imbalance_minor": 0
+      }
+    },
+    {
+      "drill_id": "CHAOS-06",
+      "name": "broker_outage_and_checkpoint_recovery",
+      "passed": true,
+      "duration_ms": 1.72,
+      "evidence": {
+        "outage_exception_caught": true,
+        "pre_outage_consumed": 5,
+        "post_recovery_consumed": 5,
+        "zero_event_loss": true
+      }
+    },
+    {
+      "drill_id": "CHAOS-07",
+      "name": "schema_invalid_poison_event_dlq_quarantine",
+      "passed": true,
+      "duration_ms": 229.4,
+      "evidence": {
+        "quarantined_dlq_events": 4,
+        "valid_cdc_processed": 233,
+        "dq_all_passed": true,
+        "ledger_balanced": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+SELECT
+    entry_line_id,
+    journal_entry_id,
+    parent_entry_id,
+    booking_id,
+    source_event_id,
+    accounting_period,
+    original_period,
+    entry_type,
+    account_code,
+    account_category,
+    original_currency,
+    debit_minor,
+    credit_minor,
+    reporting_currency,
+    fx_rate_micros,
+    fx_rate_version,
+    reporting_debit_minor,
+    reporting_credit_minor,
+    effective_at,
+    recorded_at,
+    is_restatement
+FROM {{ source('gold', 'ledger_journal_entries') }}

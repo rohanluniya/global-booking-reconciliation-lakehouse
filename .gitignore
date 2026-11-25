@@ -1,0 +1,38 @@
+# Python & virtual environments
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+htmlcov/
+
+# Local runtime state & warehouses
+.local_data/
+*.db
+*.sqlite
+*.sqlite3
+*.duckdb
+*.duckdb.wal
+*.pid
+*.log
+
+# dbt build artifacts (curated summaries live in results/dbt/)
+dbt_project/target/
+dbt_project/logs/
+dbt_project/dbt_packages/
+dbt_project/.user.yml
+
+# Environment & secrets
+.env
+.env.local
+
+# OS & editor junk
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/

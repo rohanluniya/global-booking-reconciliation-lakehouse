@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "PspSettlementEvent",
+  "namespace": "com.bookingledger.settlement.v1",
+  "doc": "External payment service provider settlement line item.",
+  "fields": [
+    {"name": "settlement_id", "type": "string"},
+    {"name": "file_batch_id", "type": "string"},
+    {"name": "booking_id", "type": "string"},
+    {"name": "payment_reference", "type": "string"},
+    {"name": "settlement_type", "type": {"type": "enum", "name": "SettlementType", "symbols": ["CAPTURE", "REFUND", "CHARGEBACK", "PAYOUT"]}},
+    {"name": "currency", "type": "string"},
+    {"name": "gross_minor", "type": "long"},
+    {"name": "psp_fee_minor", "type": "long"},
+    {"name": "net_minor", "type": "long"},
+    {"name": "settled_at", "type": "string"},
+    {"name": "bank_transfer_ref", "type": ["null", "string"], "default": null}
+  ]
+}

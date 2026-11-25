@@ -1,0 +1,32 @@
+{
+  "name": "booking-postgres-outbox-cdc",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.hostname": "postgres-oltp",
+    "database.port": "5432",
+    "database.user": "${file:/opt/kafka/config/credentials.properties:postgres_user}",
+    "database.password": "${file:/opt/kafka/config/credentials.properties:postgres_password}",
+    "database.dbname": "booking_core",
+    "topic.prefix": "oltp.booking",
+    "plugin.name": "pgoutput",
+    "slot.name": "booking_outbox_slot",
+    "publication.name": "booking_outbox_pub",
+    "table.include.list": "booking_core.outbox_events,booking_core.listings,booking_core.tax_policies",
+    "tombstones.on.delete": "false",
+    "snapshot.mode": "initial",
+    "decimal.handling.mode": "string",
+    "transforms": "outbox",
+    "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+    "transforms.outbox.route.by.field": "aggregatetype",
+    "transforms.outbox.route.topic.replacement": "cdc.${routedByValue}",
+    "transforms.outbox.table.field.event.id": "id",
+    "transforms.outbox.table.field.event.key": "aggregateid",
+    "transforms.outbox.table.field.event.type": "type",
+    "transforms.outbox.table.field.event.payload": "payload",
+    "transforms.outbox.table.fields.additional.placement": "type:header:eventType,effective_at:header:effectiveAt",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}

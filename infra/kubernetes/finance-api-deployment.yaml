@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-control-plane
+  namespace: booking-finance-lakehouse
+  labels:
+    app: finance-control-plane
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: finance-control-plane
+  template:
+    metadata:
+      labels:
+        app: finance-control-plane
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8040"
+        prometheus.io/path: "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: finance-api
+          image: ghcr.io/ankdeshm/global-booking-reconciliation-lakehouse:0.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8040
+              name: http
+          env:
+            - name: FINANCE_RUNTIME_MODE
+              value: "kubernetes_distributed"
+            - name: FINANCE_ADMIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: finance-api-secrets
+                  key: admin_api_key
+            - name: FINANCE_AUDITOR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: finance-api-secrets
+                  key: auditor_api_key
+            - name: FINANCE_READER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: finance-api-secrets
+                  key: reader_api_key
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8040
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8040
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1536Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]

@@ -1,0 +1,27 @@
+{
+  "type": "record",
+  "name": "LedgerJournalEntry",
+  "namespace": "com.bookingledger.accounting.v1",
+  "doc": "Immutable append-only double-entry accounting leg in original and reporting currency minor units.",
+  "fields": [
+    {"name": "entry_line_id", "type": "string"},
+    {"name": "journal_entry_id", "type": "string"},
+    {"name": "parent_entry_id", "type": ["null", "string"], "default": null},
+    {"name": "booking_id", "type": "string"},
+    {"name": "source_event_id", "type": "string"},
+    {"name": "accounting_period", "type": "string"},
+    {"name": "entry_type", "type": "string"},
+    {"name": "account_code", "type": "string"},
+    {"name": "original_currency", "type": "string"},
+    {"name": "debit_minor", "type": "long"},
+    {"name": "credit_minor", "type": "long"},
+    {"name": "reporting_currency", "type": "string"},
+    {"name": "fx_rate_micros", "type": "long", "doc": "Exact FX rate scaled by 1,000,000"},
+    {"name": "fx_rate_version", "type": "string"},
+    {"name": "reporting_debit_minor", "type": "long"},
+    {"name": "reporting_credit_minor", "type": "long"},
+    {"name": "effective_at", "type": "string"},
+    {"name": "recorded_at", "type": "string"},
+    {"name": "is_restatement", "type": "boolean", "default": false}
+  ]
+}

@@ -1,0 +1,87 @@
+[project]
+name = "global-booking-reconciliation-lakehouse"
+version = "0.1.0"
+description = "Open-source global booking, immutable double-entry financial ledger, as-of FX conversion, 3-way settlement reconciliation, and period-close lakehouse on Apache Iceberg V2, DuckDB, and dbt."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "dbt-core==1.11.17",
+    "dbt-duckdb==1.11.1",
+    "duckdb==2.0.0",
+    "fastapi==0.163.2",
+    "fastavro==1.13.1",
+    "httpx==0.28.1",
+    "hypothesis==6.170.15",
+    "matplotlib==3.11.2",
+    "opentelemetry-api==1.45.2",
+    "opentelemetry-sdk==1.45.2",
+    "prometheus-client==0.26.0",
+    "psutil==7.2.2",
+    "pyarrow==25.0.1",
+    "pydantic==2.14.3",
+    "pyiceberg[sql-sqlite,pyiceberg-core]==0.12.0",
+    "pyyaml==6.0.3",
+    "requests==2.34.2",
+    "sqlalchemy==2.1.9",
+    "uvicorn==0.54.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy==1.19.1",
+    "pytest==9.2.0",
+    "pytest-asyncio==1.5.0",
+    "ruff==0.17.5",
+    "types-PyYAML>=6.0.12",
+]
+
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "booking_ledger",
+    "services",
+]
+
+[tool.uv]
+managed = true
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+exclude = [".venv", ".local_data", "dbt_project/target", "dbt_project/logs", "dbt_project/dbt_packages"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM"]
+ignore = ["E501", "B008", "SIM105"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/**/*.py" = ["E402"]
+"benchmarks/**/*.py" = ["E402"]
+"services/**/*.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+exclude = ["^\\.venv/", "^\\.local_data/", "^dbt_project/", "^processing/"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-q --tb=short"
+markers = [
+    "unit: fast pure-Python unit and property tests",
+    "contract: Avro schema contract and backward-compatibility tests",
+    "integration: PyIceberg V2 medallion, DQ, and dbt integration tests",
+    "e2e: FastAPI live control plane and RBAC end-to-end tests",
+    "chaos: controlled fault-injection and recovery drills",
+    "performance: throughput, latency, compaction, and zero-drift gates",
+]

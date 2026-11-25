@@ -1,0 +1,63 @@
+version: 2
+
+sources:
+  - name: silver
+    schema: silver
+    tables:
+      - name: booking_state_history
+      - name: dim_listings_scd2
+      - name: dim_tax_policies_scd2
+      - name: fx_rates_asof
+  - name: gold
+    schema: gold
+    tables:
+      - name: ledger_journal_entries
+      - name: reconciliation_results
+      - name: reconciliation_exceptions
+      - name: period_close_snapshots
+
+models:
+  - name: stg_booking_state_history
+    description: "Cleaned bi-temporal booking lifecycle state transitions sourced from Iceberg silver.booking_state_history."
+    columns:
+      - name: state_id
+        tests: [unique, not_null]
+      - name: booking_id
+        tests: [not_null]
+      - name: sequence_num
+        tests: [not_null]
+  - name: stg_ledger_journal_entries
+    description: "Immutable append-only double-entry ledger lines with exact integer minor units."
+    columns:
+      - name: entry_line_id
+        tests: [unique, not_null]
+      - name: journal_entry_id
+        tests: [not_null]
+      - name: account_code
+        tests: [not_null]
+  - name: stg_reconciliation_results
+    description: "3-way reconciliation classifications across Internal Ledger, PSP, and Bank."
+    columns:
+      - name: recon_id
+        tests: [unique, not_null]
+      - name: classification
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - MATCHED
+                  - TIMING_IN_TRANSIT
+                  - DUPLICATE_FILE_DEDUPED
+                  - FEE_VARIANCE
+                  - FX_VARIANCE
+                  - PARTIAL_REFUND_MISMATCH
+                  - CHARGEBACK_OPEN
+                  - UNMATCHED_PSP_OR_BANK
+  - name: stg_fx_rates_asof
+    description: "Bi-temporal FX rates with revision versions scaled in integer micros."
+    columns:
+      - name: fx_id
+        tests: [unique, not_null]
+      - name: rate_micros
+        tests: [not_null]

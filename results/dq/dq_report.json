@@ -1,0 +1,132 @@
+{
+  "summary": {
+    "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+    "total_checks": 12,
+    "passed_checks": 12,
+    "failed_checks": 0,
+    "pass_rate": 1.0,
+    "all_passed": true
+  },
+  "checks": [
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "bronze_cdc_non_empty",
+      "table_name": "bronze.cdc_booking_events",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "4667",
+      "expected_rule": "row_count > 0",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "quarantine_dlq_schema_enforcement",
+      "table_name": "bronze.quarantine_dlq",
+      "severity": "HIGH",
+      "passed": true,
+      "observed_value": "6",
+      "expected_rule": "all quarantined records preserve reason and raw payload",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "ledger_exact_integer_minor_units",
+      "table_name": "gold.ledger_journal_entries",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "0",
+      "expected_rule": "0 IEEE-754 float values in monetary columns",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "ledger_valid_iso_currencies",
+      "table_name": "gold.ledger_journal_entries",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "[]",
+      "expected_rule": "all currencies in supported ISO-4217 set",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "ledger_double_entry_zero_sum",
+      "table_name": "gold.ledger_journal_entries",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "imbalance=0, unbalanced_entries=0",
+      "expected_rule": "SUM(debit) == SUM(credit) per journal_entry_id, per currency, and globally",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "ledger_unique_entry_line_ids",
+      "table_name": "gold.ledger_journal_entries",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "total=8056, unique=8056",
+      "expected_rule": "entry_line_id strictly unique",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "scd2_listings_non_overlapping",
+      "table_name": "silver.dim_listings_scd2",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "errors=0",
+      "expected_rule": "zero overlapping [valid_from, valid_to) intervals and 1 current row per listing_id",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "scd2_tax_policies_non_overlapping",
+      "table_name": "silver.dim_tax_policies_scd2",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "errors=0",
+      "expected_rule": "zero overlapping [valid_from, valid_to) intervals and 1 current row per jurisdiction",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "booking_history_monotonic_sequence",
+      "table_name": "silver.booking_state_history",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "rows=4635, seq_errors=0",
+      "expected_rule": "strictly increasing sequence_num per booking_id after out-of-order reconstruction",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "fx_rates_positive_micros",
+      "table_name": "silver.fx_rates_asof",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "rows=402, non_positive=0",
+      "expected_rule": "all FX rate_micros > 0",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "reconciliation_coverage",
+      "table_name": "gold.reconciliation_results",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "605",
+      "expected_rule": "every active booking/orphan settlement receives deterministic classification",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    },
+    {
+      "run_id": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "check_name": "period_close_certificate_integrity",
+      "table_name": "gold.period_close_snapshots",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "2",
+      "expected_rule": "all close snapshots have 0 imbalance and valid SHA-256 sign-off digest",
+      "checked_at": "2026-11-25T03:41:36.240097+00:00"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+name: "booking_reconciliation_marts"
+version: "1.0.0"
+config-version: 2
+
+profile: "booking_lakehouse_duckdb"
+
+model-paths: ["models"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  booking_reconciliation_marts:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts

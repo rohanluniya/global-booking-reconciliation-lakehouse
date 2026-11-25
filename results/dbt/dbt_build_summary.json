@@ -1,0 +1,246 @@
+{
+  "returncode": 0,
+  "stdout_tail": [
+    "03:41:38  28 of 35 START test unique_mart_revenue_recognition_accounting_period .......... [RUN]",
+    "03:41:38  25 of 35 OK created sql table model marts.mart_trial_balance ................... [OK in 0.03s]",
+    "03:41:38  27 of 35 PASS not_null_mart_revenue_recognition_accounting_period .............. [PASS in 0.02s]",
+    "03:41:38  28 of 35 PASS unique_mart_revenue_recognition_accounting_period ................ [PASS in 0.02s]",
+    "03:41:38  26 of 35 OK created sql table model marts.mart_reconciliation_bridge ........... [OK in 0.03s]",
+    "03:41:38  29 of 35 START test assert_trial_balance_zero_sum .............................. [RUN]",
+    "03:41:38  30 of 35 START test not_null_mart_trial_balance_account_code ................... [RUN]",
+    "03:41:38  31 of 35 START test not_null_mart_trial_balance_accounting_period .............. [RUN]",
+    "03:41:38  32 of 35 START test not_null_mart_trial_balance_total_reporting_credit_minor ... [RUN]",
+    "03:41:38  30 of 35 PASS not_null_mart_trial_balance_account_code ......................... [PASS in 0.02s]",
+    "03:41:38  31 of 35 PASS not_null_mart_trial_balance_accounting_period .................... [PASS in 0.02s]",
+    "03:41:38  29 of 35 PASS assert_trial_balance_zero_sum .................................... [PASS in 0.02s]",
+    "03:41:38  32 of 35 PASS not_null_mart_trial_balance_total_reporting_credit_minor ......... [PASS in 0.02s]",
+    "03:41:38  33 of 35 START test not_null_mart_trial_balance_total_reporting_debit_minor .... [RUN]",
+    "03:41:38  34 of 35 START test not_null_mart_reconciliation_bridge_accounting_period ...... [RUN]",
+    "03:41:38  35 of 35 START test not_null_mart_reconciliation_bridge_classification ......... [RUN]",
+    "03:41:38  34 of 35 PASS not_null_mart_reconciliation_bridge_accounting_period ............ [PASS in 0.01s]",
+    "03:41:38  33 of 35 PASS not_null_mart_trial_balance_total_reporting_debit_minor .......... [PASS in 0.01s]",
+    "03:41:38  35 of 35 PASS not_null_mart_reconciliation_bridge_classification ............... [PASS in 0.01s]",
+    "03:41:38  ",
+    "03:41:38  Finished running 4 table models, 27 data tests, 4 view models in 0 hours 0 minutes and 0.34 seconds (0.34s).",
+    "03:41:38  ",
+    "03:41:38  Completed successfully",
+    "03:41:38  ",
+    "03:41:38  Done. PASS=35 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=35"
+  ],
+  "stderr_tail": [],
+  "results": [
+    {
+      "unique_id": "model.booking_reconciliation_marts.stg_ledger_journal_entries",
+      "status": "success",
+      "execution_time_s": 0.0664,
+      "failures": null
+    },
+    {
+      "unique_id": "model.booking_reconciliation_marts.stg_booking_state_history",
+      "status": "success",
+      "execution_time_s": 0.0682,
+      "failures": null
+    },
+    {
+      "unique_id": "model.booking_reconciliation_marts.mart_exception_aging",
+      "status": "success",
+      "execution_time_s": 0.0686,
+      "failures": null
+    },
+    {
+      "unique_id": "model.booking_reconciliation_marts.stg_fx_rates_asof",
+      "status": "success",
+      "execution_time_s": 0.0684,
+      "failures": null
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.assert_no_orphan_journal_entries",
+      "status": "pass",
+      "execution_time_s": 0.0283,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_booking_state_history_sequence_num.93c1c3219d",
+      "status": "pass",
+      "execution_time_s": 0.0286,
+      "failures": 0
+    },
+    {
+      "unique_id": "model.booking_reconciliation_marts.stg_reconciliation_results",
+      "status": "success",
+      "execution_time_s": 0.0288,
+      "failures": null
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_booking_state_history_booking_id.4de3490254",
+      "status": "pass",
+      "execution_time_s": 0.0297,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_ledger_journal_entries_account_code.c90c1b228c",
+      "status": "pass",
+      "execution_time_s": 0.0156,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_booking_state_history_state_id.a382218c38",
+      "status": "pass",
+      "execution_time_s": 0.0171,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_ledger_journal_entries_journal_entry_id.1e546bc91b",
+      "status": "pass",
+      "execution_time_s": 0.0169,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_ledger_journal_entries_entry_line_id.2480c327f6",
+      "status": "pass",
+      "execution_time_s": 0.0216,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.unique_stg_booking_state_history_state_id.1e328a6349",
+      "status": "pass",
+      "execution_time_s": 0.0195,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.unique_stg_ledger_journal_entries_entry_line_id.77771e52a6",
+      "status": "pass",
+      "execution_time_s": 0.0196,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_exception_aging_aging_bucket.8abf2d42c6",
+      "status": "pass",
+      "execution_time_s": 0.015,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_exception_aging_severity.9088654bc1",
+      "status": "pass",
+      "execution_time_s": 0.0144,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_fx_rates_asof_fx_id.e23262e9b1",
+      "status": "pass",
+      "execution_time_s": 0.0169,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.unique_stg_fx_rates_asof_fx_id.0efc0d90e4",
+      "status": "pass",
+      "execution_time_s": 0.0157,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_fx_rates_asof_rate_micros.3e228b6d84",
+      "status": "pass",
+      "execution_time_s": 0.0175,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.accepted_values_stg_reconciliation_results_classification__MATCHED__TIMING_IN_TRANSIT__DUPLICATE_FILE_DEDUPED__FEE_VARIANCE__FX_VARIANCE__PARTIAL_REFUND_MISMATCH__CHARGEBACK_OPEN__UNMATCHED_PSP_OR_BANK.5015ec1ae2",
+      "status": "pass",
+      "execution_time_s": 0.0164,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_reconciliation_results_recon_id.d5dc2d8f42",
+      "status": "pass",
+      "execution_time_s": 0.0147,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_stg_reconciliation_results_classification.ca6f33dfdd",
+      "status": "pass",
+      "execution_time_s": 0.0201,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.unique_stg_reconciliation_results_recon_id.943ece7545",
+      "status": "pass",
+      "execution_time_s": 0.0174,
+      "failures": 0
+    },
+    {
+      "unique_id": "model.booking_reconciliation_marts.mart_revenue_recognition",
+      "status": "success",
+      "execution_time_s": 0.0268,
+      "failures": null
+    },
+    {
+      "unique_id": "model.booking_reconciliation_marts.mart_trial_balance",
+      "status": "success",
+      "execution_time_s": 0.0277,
+      "failures": null
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_revenue_recognition_accounting_period.83e9fb493f",
+      "status": "pass",
+      "execution_time_s": 0.0174,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.unique_mart_revenue_recognition_accounting_period.033371b9e1",
+      "status": "pass",
+      "execution_time_s": 0.0176,
+      "failures": 0
+    },
+    {
+      "unique_id": "model.booking_reconciliation_marts.mart_reconciliation_bridge",
+      "status": "success",
+      "execution_time_s": 0.0272,
+      "failures": null
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_trial_balance_account_code.4e8485bd46",
+      "status": "pass",
+      "execution_time_s": 0.0166,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_trial_balance_accounting_period.97c0dc1ec8",
+      "status": "pass",
+      "execution_time_s": 0.0167,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.assert_trial_balance_zero_sum",
+      "status": "pass",
+      "execution_time_s": 0.0174,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_trial_balance_total_reporting_credit_minor.59851cab03",
+      "status": "pass",
+      "execution_time_s": 0.0156,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_reconciliation_bridge_accounting_period.00b33b5df6",
+      "status": "pass",
+      "execution_time_s": 0.012,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_trial_balance_total_reporting_debit_minor.5788902e9d",
+      "status": "pass",
+      "execution_time_s": 0.0138,
+      "failures": 0
+    },
+    {
+      "unique_id": "test.booking_reconciliation_marts.not_null_mart_reconciliation_bridge_classification.755073d70b",
+      "status": "pass",
+      "execution_time_s": 0.0137,
+      "failures": 0
+    }
+  ],
+  "total_nodes": 35,
+  "passed_nodes": 35,
+  "failed_nodes": 0
+}

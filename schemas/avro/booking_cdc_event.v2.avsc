@@ -1,0 +1,40 @@
+{
+  "type": "record",
+  "name": "BookingCdcEvent",
+  "namespace": "com.bookingledger.cdc.v1",
+  "doc": "Backward-compatible v2 evolution of BookingCdcEvent adding optional schema provenance, idempotency correlation, and restatement linkage with explicit defaults.",
+  "fields": [
+    {"name": "event_id", "type": "string", "doc": "Deterministic SHA-256 event identity"},
+    {"name": "booking_id", "type": "string"},
+    {"name": "listing_id", "type": "string"},
+    {"name": "guest_id", "type": "string"},
+    {"name": "host_id", "type": "string"},
+    {"name": "event_type", "type": {"type": "enum", "name": "BookingEventType", "symbols": [
+      "BOOKING_HELD", "BOOKING_CONFIRMED", "BOOKING_MODIFIED", "BOOKING_CHECKED_IN",
+      "BOOKING_COMPLETED", "BOOKING_CANCELLED", "PAYMENT_AUTHORIZED", "PAYMENT_CAPTURED",
+      "PAYMENT_RETRY_SUCCEEDED", "REFUND_ISSUED", "PARTIAL_REFUND_ISSUED",
+      "HOST_PAYOUT_SCHEDULED", "HOST_PAYOUT_SETTLED", "CHARGEBACK_OPENED", "CHARGEBACK_LOST"
+    ]}},
+    {"name": "cdc_op", "type": {"type": "enum", "name": "CdcOp", "symbols": ["c", "u", "d", "r"]}},
+    {"name": "sequence_num", "type": "int", "doc": "Monotonic per-booking business sequence"},
+    {"name": "effective_at", "type": "string", "doc": "ISO-8601 UTC business effective timestamp"},
+    {"name": "recorded_at", "type": "string", "doc": "ISO-8601 UTC OLTP commit / CDC emit timestamp"},
+    {"name": "host_timezone", "type": "string", "doc": "IANA timezone of listing for revenue cutoff"},
+    {"name": "currency", "type": "string", "doc": "ISO-4217 3-letter currency code"},
+    {"name": "nights", "type": "int"},
+    {"name": "room_subtotal_minor", "type": "long"},
+    {"name": "platform_fee_minor", "type": "long"},
+    {"name": "host_fee_minor", "type": "long"},
+    {"name": "tax_minor", "type": "long"},
+    {"name": "gross_total_minor", "type": "long"},
+    {"name": "refund_minor", "type": "long", "default": 0},
+    {"name": "chargeback_minor", "type": "long", "default": 0},
+    {"name": "tax_policy_version", "type": "string"},
+    {"name": "jurisdiction", "type": "string"},
+    {"name": "payment_reference", "type": ["null", "string"], "default": null},
+    {"name": "source_lsn", "type": "long", "doc": "Simulated PostgreSQL WAL LSN"},
+    {"name": "schema_version", "type": "int", "default": 2, "doc": "Backward-compatible v2 marker"},
+    {"name": "correlation_id", "type": ["null", "string"], "default": null, "doc": "End-to-end trace correlation ID"},
+    {"name": "restatement_reason", "type": ["null", "string"], "default": null, "doc": "Optional audit reason when event arrives post-close"}
+  ]
+}

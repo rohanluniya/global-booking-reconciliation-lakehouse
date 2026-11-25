@@ -1,0 +1,383 @@
+[
+  {
+    "eventType": "COMPLETE",
+    "eventTime": "2026-11-25T03:29:49.868230+00:00",
+    "run": {
+      "runId": "5f3d9afb-8c74-4034-a180-afe13e82f919",
+      "facets": {}
+    },
+    "job": {
+      "namespace": "booking-reconciliation-lakehouse",
+      "name": "booking_medallion_ledger_reconciliation",
+      "facets": {}
+    },
+    "inputs": [
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.cdc_booking_events",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 4667
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.psp_settlements",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 744
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.bank_statements",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 581
+          }
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.booking_state_history",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 4635
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.dim_listings_scd2",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 56
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.dim_tax_policies_scd2",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 8
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.fx_rates_asof",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 402
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.ledger_journal_entries",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 8056
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.reconciliation_results",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 605
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.reconciliation_exceptions",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 84
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.period_close_snapshots",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 2
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "quality.dq_results",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 12
+          }
+        }
+      }
+    ],
+    "producer": "https://github.com/ankdeshm/global-booking-reconciliation-lakehouse/0.1.0",
+    "schemaURL": "https://openlineage.io/spec/2-0-2/OpenLineage.json#/$defs/RunEvent"
+  },
+  {
+    "eventType": "COMPLETE",
+    "eventTime": "2026-11-25T03:40:00.626869+00:00",
+    "run": {
+      "runId": "6e8b78fd-0f3b-4bf6-bba5-3ef11084fe69",
+      "facets": {}
+    },
+    "job": {
+      "namespace": "booking-reconciliation-lakehouse",
+      "name": "booking_medallion_ledger_reconciliation",
+      "facets": {}
+    },
+    "inputs": [
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.cdc_booking_events",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 4667
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.psp_settlements",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 744
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.bank_statements",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 581
+          }
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.booking_state_history",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 4635
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.dim_listings_scd2",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 56
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.dim_tax_policies_scd2",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 8
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.fx_rates_asof",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 402
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.ledger_journal_entries",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 8056
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.reconciliation_results",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 605
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.reconciliation_exceptions",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 84
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.period_close_snapshots",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 2
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "quality.dq_results",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 12
+          }
+        }
+      }
+    ],
+    "producer": "https://github.com/ankdeshm/global-booking-reconciliation-lakehouse/0.1.0",
+    "schemaURL": "https://openlineage.io/spec/2-0-2/OpenLineage.json#/$defs/RunEvent"
+  },
+  {
+    "eventType": "COMPLETE",
+    "eventTime": "2026-11-25T03:41:36.779651+00:00",
+    "run": {
+      "runId": "80257817-f1d0-4abb-b186-16ec7fe2840a",
+      "facets": {}
+    },
+    "job": {
+      "namespace": "booking-reconciliation-lakehouse",
+      "name": "booking_medallion_ledger_reconciliation",
+      "facets": {}
+    },
+    "inputs": [
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.cdc_booking_events",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 4667
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.psp_settlements",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 744
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "bronze.bank_statements",
+        "facets": {
+          "dataQualityMetrics": {
+            "rowCount": 581
+          }
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.booking_state_history",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 4635
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.dim_listings_scd2",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 56
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.dim_tax_policies_scd2",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 8
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "silver.fx_rates_asof",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 402
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.ledger_journal_entries",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 8056
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.reconciliation_results",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 605
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.reconciliation_exceptions",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 84
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "gold.period_close_snapshots",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 2
+          }
+        }
+      },
+      {
+        "namespace": "booking-reconciliation-lakehouse",
+        "name": "quality.dq_results",
+        "facets": {
+          "outputStatistics": {
+            "rowCount": 12
+          }
+        }
+      }
+    ],
+    "producer": "https://github.com/ankdeshm/global-booking-reconciliation-lakehouse/0.1.0",
+    "schemaURL": "https://openlineage.io/spec/2-0-2/OpenLineage.json#/$defs/RunEvent"
+  }
+]

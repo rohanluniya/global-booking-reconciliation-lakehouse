@@ -1,0 +1,33 @@
+FROM python:3.12.8-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    FINANCE_DATA_DIR=/app/.local_data \
+    FINANCE_API_HOST=0.0.0.0 \
+    FINANCE_API_PORT=8040
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir uv==0.12.3
+
+COPY pyproject.toml uv.lock README.md LICENSE ./
+COPY booking_ledger ./booking_ledger
+COPY services ./services
+COPY apps ./apps
+COPY schemas ./schemas
+COPY dbt_project ./dbt_project
+COPY scripts ./scripts
+
+RUN uv sync --frozen --no-dev --python 3.12.8
+
+ENV PATH="/app/.venv/bin:${PATH}"
+
+RUN useradd --create-home --uid 10001 financeuser && \
+    mkdir -p /app/.local_data /app/results && \
+    chown -R financeuser:financeuser /app
+
+USER financeuser
+
+EXPOSE 8040
+
+ENTRYPOINT ["bash", "scripts/entrypoint_standalone.sh"]

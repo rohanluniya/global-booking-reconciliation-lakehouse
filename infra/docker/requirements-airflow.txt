@@ -1,0 +1,6 @@
+# Container-isolated Airflow 3.4.0 runtime pins
+apache-airflow==3.4.0
+dbt-core==1.11.17
+dbt-duckdb==1.11.1
+duckdb==2.0.0
+pyiceberg[sql-sqlite,pyiceberg-core]==0.12.0

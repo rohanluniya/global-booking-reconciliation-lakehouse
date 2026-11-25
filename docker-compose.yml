@@ -1,0 +1,284 @@
+name: global-booking-reconciliation-lakehouse
+
+# Multi-profile distributed architecture with strictly pinned image tags.
+# Profiles: core | analytics | observability | full
+# Note: On hosts without Docker/Podman, use `bash scripts/run_portable.sh` (local_native mode).
+
+services:
+  postgres-oltp:
+    image: imresamu/postgis:17-3.6.1-alpine3.23
+    profiles: ["core", "analytics", "full"]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-booking_oltp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_postgres_local}
+      POSTGRES_DB: ${POSTGRES_DB:-booking_core}
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_replication_slots=4"
+      - "-c"
+      - "max_wal_senders=4"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_oltp_data:/var/lib/postgresql/data
+      - ./ingestion/cdc/postgres_oltp_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-booking_oltp} -d ${POSTGRES_DB:-booking_core}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+  kafka:
+    image: apache/kafka:4.3.2
+    profiles: ["core", "analytics", "full"]
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    ports:
+      - "127.0.0.1:9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 6
+    deploy:
+      resources:
+        limits:
+          memory: 1536m
+
+  schema-registry:
+    image: apicurio/apicurio-registry:3.3.5
+    profiles: ["core", "analytics", "full"]
+    ports:
+      - "127.0.0.1:8081:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health/ready || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+
+  debezium-connect:
+    image: quay.io/debezium/connect:3.7.1.Final
+    profiles: ["core", "full"]
+    depends_on:
+      postgres-oltp:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: booking-cdc-connect
+      CONFIG_STORAGE_TOPIC: _connect_configs
+      OFFSET_STORAGE_TOPIC: _connect_offsets
+      STATUS_STORAGE_TOPIC: _connect_status
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+    ports:
+      - "127.0.0.1:8083:8083"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8083/connectors || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+  rustfs:
+    image: rustfs/rustfs:1.0.6
+    profiles: ["core", "analytics", "full"]
+    environment:
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:-rustfsadmin}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY:-change_me_rustfs_local}
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - rustfs_data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  lakekeeper:
+    image: quay.io/lakekeeper/catalog:v0.15.1
+    profiles: ["core", "analytics", "full"]
+    depends_on:
+      - rustfs
+    environment:
+      LAKEKEEPER__LISTEN_PORT: "8181"
+    ports:
+      - "127.0.0.1:8181:8181"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  finance-api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.standalone
+    profiles: ["core", "analytics", "observability", "full"]
+    environment:
+      FINANCE_RUNTIME_MODE: docker_distributed
+      FINANCE_API_HOST: 0.0.0.0
+      FINANCE_API_PORT: "8040"
+      FINANCE_ADMIN_API_KEY: ${FINANCE_ADMIN_API_KEY:-dev-finance-admin-key-change-me}
+      FINANCE_AUDITOR_API_KEY: ${FINANCE_AUDITOR_API_KEY:-dev-finance-auditor-key-change-me}
+      FINANCE_READER_API_KEY: ${FINANCE_READER_API_KEY:-dev-finance-reader-key-change-me}
+    ports:
+      - "127.0.0.1:8040:8040"
+    volumes:
+      - finance_local_data:/app/.local_data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8040/health\")'"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1536m
+
+  spark-ledger:
+    image: apache/spark:4.1.4-scala2.13-java17-python3-ubuntu
+    profiles: ["analytics", "full"]
+    depends_on:
+      - lakekeeper
+      - rustfs
+    environment:
+      LAKEKEEPER_URI: http://lakekeeper:8181/catalog
+      S3_ENDPOINT: http://rustfs:9000
+    volumes:
+      - ./processing/spark:/opt/spark/jobs:ro
+    command: ["/bin/bash", "-c", "sleep infinity"]
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  trino:
+    image: trinodb/trino:484
+    profiles: ["analytics", "full"]
+    depends_on:
+      - lakekeeper
+    ports:
+      - "127.0.0.1:8088:8080"
+    volumes:
+      - ./sql/trino:/etc/trino/queries:ro
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  airflow-scheduler:
+    image: apache/airflow:slim-3.4.0-python3.12
+    profiles: ["analytics", "full"]
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+    volumes:
+      - ./processing/airflow/dags:/opt/airflow/dags:ro
+      - ./booking_ledger:/opt/airflow/dags/booking_ledger:ro
+    command: ["standalone"]
+    ports:
+      - "127.0.0.1:8085:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  prometheus:
+    image: prom/prometheus:v3.16.0
+    profiles: ["observability", "full"]
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/observability/alerts.yml:/etc/prometheus/alerts.yml:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  grafana:
+    image: grafana/grafana:13.0.14
+    profiles: ["observability", "full"]
+    depends_on:
+      - prometheus
+      - loki
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-change_me_grafana_local}
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./infra/observability/grafana-dashboard-finance.json:/var/lib/grafana/dashboards/finance.json:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  loki:
+    image: grafana/loki:3.6.22
+    profiles: ["observability", "full"]
+    ports:
+      - "127.0.0.1:3100:3100"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.166.0-${OTEL_ARCH:-arm64}
+    profiles: ["observability", "full"]
+    ports:
+      - "127.0.0.1:4317:4317"
+      - "127.0.0.1:4318:4318"
+    volumes:
+      - ./infra/observability/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  marquez:
+    image: marquezproject/marquez:0.51.1
+    platform: linux/amd64
+    profiles: ["observability", "full"]
+    ports:
+      - "127.0.0.1:5000:5000"
+      - "127.0.0.1:5001:5001"
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+
+volumes:
+  postgres_oltp_data:
+  kafka_data:
+  rustfs_data:
+  finance_local_data:

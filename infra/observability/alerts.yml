@@ -1,0 +1,57 @@
+groups:
+  - name: financial-ledger-integrity-alerts
+    rules:
+      - alert: TrialBalanceImbalanceDetected
+        expr: finance_trial_balance_imbalance_minor > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: finance-data-engineering
+        annotations:
+          summary: "Double-entry ledger trial balance imbalance detected"
+          description: "Global trial balance debit-credit difference is {{ $value }} minor units (must be strictly 0)."
+          runbook_url: "docs/reliability.md#runbook-trial-balance-imbalance"
+
+      - alert: DataQualityGateFailure
+        expr: finance_dq_pass_rate < 1.0
+        for: 2m
+        labels:
+          severity: critical
+          team: finance-data-engineering
+        annotations:
+          summary: "Financial lakehouse Data Quality pass rate dropped below 100%"
+          description: "Observed DQ pass rate is {{ $value }}. Month-end HARD_CLOSE is automatically blocked."
+          runbook_url: "docs/reliability.md#runbook-dq-gate-failure"
+
+      - alert: ReconciliationMatchRateDegraded
+        expr: finance_reconciliation_match_rate < 0.80
+        for: 10m
+        labels:
+          severity: warning
+          team: finance-operations
+        annotations:
+          summary: "3-way reconciliation match rate fell below 80%"
+          description: "Current match rate is {{ $value }}. Inspect PSP settlement feed or bank statement lag."
+          runbook_url: "docs/reliability.md#runbook-reconciliation-degraded"
+
+      - alert: HighOpenExceptionExposure
+        expr: finance_open_exception_exposure_usd_minor > 5000000
+        for: 15m
+        labels:
+          severity: warning
+          team: treasury-ops
+        annotations:
+          summary: "Open 3-way reconciliation exposure exceeds $50,000 USD"
+          description: "Total unresolved exposure is {{ $value }} USD cents."
+          runbook_url: "docs/reliability.md#runbook-open-exception-exposure"
+
+      - alert: PoisonDlqSpike
+        expr: increase(finance_dlq_events_total[15m]) > 25
+        for: 5m
+        labels:
+          severity: warning
+          team: cdc-ingestion
+        annotations:
+          summary: "Spike in Avro schema-invalid CDC events quarantined to DLQ"
+          description: "More than 25 CDC events failed contract validation in the last 15 minutes."
+          runbook_url: "docs/reliability.md#runbook-poison-dlq-spike"
