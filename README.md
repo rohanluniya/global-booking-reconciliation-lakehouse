@@ -64,7 +64,7 @@ All numbers below are 100% measured on Apple M4 Pro (14 logical cores, 48.0 GiB 
 ### Option A: Zero-Docker Portable Runner (macOS / Linux with Python 3.12 + `uv`)
 
 ```bash
-git clone https://github.com/ankdeshm/global-booking-reconciliation-lakehouse.git
+git clone https://github.com/rohanluniya/global-booking-reconciliation-lakehouse.git
 cd global-booking-reconciliation-lakehouse
 bash scripts/run_portable.sh
 ```
